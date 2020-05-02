@@ -1,0 +1,6 @@
+Resources:
+  API:
+    Type: AWS::ApiGateway::RestApi
+    Properties:
+      Name: KnnAPI
+# Still need to add stuff.
