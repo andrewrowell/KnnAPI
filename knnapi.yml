@@ -1,6 +1,288 @@
 Resources:
+
   API:
     Type: AWS::ApiGateway::RestApi
     Properties:
       Name: KnnAPI
-# Still need to add stuff.
+
+  Table:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      AttributeDefinitions:
+      - AttributeName: id
+        AttributeType: S
+      KeySchema:
+      - AttributeName: id
+        KeyType: HASH
+      ProvisionedThroughput:
+        ReadCapacityUnits: 1
+        WriteCapacityUnits: 1
+      TableName: iris_data
+
+  LambdaRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+        - Effect: Allow
+          Principal:
+            Service: lambda.amazonaws.com
+          Action:
+          - sts:AssumeRole
+      Path: "/"
+      Policies:
+      - PolicyName: logs
+        PolicyDocument:
+          Version: '2012-10-17'
+          Statement:
+          - Effect: Allow
+            Action:
+            - logs:*
+            Resource: arn:aws:logs:*:*:*
+      - PolicyName: dynamodb
+        PolicyDocument:
+          Version: '2012-10-17'
+          Statement:
+          - Sid: '1'
+            Effect: Allow
+            Action:
+            - dynamodb:Scan
+            - dynamodb:PutItem
+            - dynamodb:GetItem
+            - dynamodb:DeleteItem
+            - dynamodb:Query
+            - dynamodb:UpdateItem
+            Resource:
+            - Fn::Join:
+              - ''
+              - - 'arn:aws:dynamodb:'
+                - Ref: AWS::Region
+                - ":"
+                - Ref: AWS::AccountId
+                - ":table/iris_data*"
+
+  AddFlowerLambda:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        S3Bucket: 'knnapi-andrew'
+        S3Key: 'lambda.zip'
+
+      Description: generic handler
+      Handler: addflower.handler
+      MemorySize: 128
+      Role:
+        Fn::GetAtt:
+        - LambdaRole
+        - Arn
+      Runtime: python3.7
+      Timeout: 3
+
+  TestFlowerLambda:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        S3Bucket: 'knnapi-andrew'
+        S3Key: 'lambda.zip'
+
+      Description: generic handler
+      Handler: testflower.handler
+      MemorySize: 128
+      Role:
+        Fn::GetAtt:
+        - LambdaRole
+        - Arn
+      Runtime: python3.7
+      Timeout: 3
+
+  AddFlowerLambdaPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:invokeFunction
+      FunctionName:
+        Fn::GetAtt:
+        - AddFlowerLambda
+        - Arn
+      Principal: apigateway.amazonaws.com
+      SourceArn:
+        Fn::Join:
+        - ''
+        - - 'arn:aws:execute-api:'
+          - Ref: AWS::Region
+          - ":"
+          - Ref: AWS::AccountId
+          - ":"
+          - Ref: API
+          - "/*"
+
+  TestFlowerLambdaPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:invokeFunction
+      FunctionName:
+        Fn::GetAtt:
+        - TestFlowerLambda
+        - Arn
+      Principal: apigateway.amazonaws.com
+      SourceArn:
+        Fn::Join:
+        - ''
+        - - 'arn:aws:execute-api:'
+          - Ref: AWS::Region
+          - ":"
+          - Ref: AWS::AccountId
+          - ":"
+          - Ref: API
+          - "/*"
+
+  ApiDeployment:
+    Type: AWS::ApiGateway::Deployment
+    Properties:
+      RestApiId:
+        Ref: API
+      StageName: v1
+    DependsOn:
+      - FlowerPost
+
+  FlowerPost:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      RestApiId:
+        Ref: API
+      ResourceId:
+        Ref: FlowerResource
+      HttpMethod: POST
+      AuthorizationType: NONE
+      Integration:
+        Type: AWS
+        IntegrationHttpMethod: POST
+        Uri:
+          Fn::Join:
+          - ''
+          - - 'arn:aws:apigateway:'
+            - Ref: AWS::Region
+            - ":lambda:path/2015-03-31/functions/"
+            - Fn::GetAtt:
+              - AddFlowerLambda
+              - Arn
+            - "/invocations"
+        IntegrationResponses:
+        - ResponseTemplates:
+            application/json: "{}"
+          ResponseParameters:
+            method.response.header.Location: integration.response.body.headers.uid
+          StatusCode: 201
+        PassthroughBehavior: NEVER
+        RequestTemplates:
+          application/json: '{"fun": "postUser", "body": $input.json(''$'')}'
+      RequestModels:
+        application/json:
+          Ref: AddFlowerModel
+      MethodResponses:
+      - ResponseModels:
+          application/json: Empty
+        ResponseParameters:
+          method.response.header.Location: true
+        StatusCode: 201
+
+  FlowerGet:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      RestApiId:
+        Ref: API
+      ResourceId:
+        Ref: FlowerResource
+      HttpMethod: GET
+      AuthorizationType: NONE
+      Integration:
+        Type: AWS
+        IntegrationHttpMethod: POST
+        Uri:
+          Fn::Join:
+          - ''
+          - - 'arn:aws:apigateway:'
+            - Ref: AWS::Region
+            - ":lambda:path/2015-03-31/functions/"
+            - Fn::GetAtt:
+              - TestFlowerLambda
+              - Arn
+            - "/invocations"
+        IntegrationResponses:
+        - ResponseTemplates:
+            application/json: "$input.json('$.body')"
+          ResponseParameters:
+            method.response.header.Location: integration.response.body.headers.uid
+          StatusCode: 200
+        PassthroughBehavior: NEVER
+        RequestTemplates:
+          application/json: '$input.body'
+      RequestModels:
+        application/json:
+          Ref: AddFlowerModel
+      MethodResponses:
+      - ResponseModels:
+          application/json:
+            Ref: GetSpeciesModel
+        ResponseParameters:
+          method.response.header.Location: true
+        StatusCode: 200
+
+  GetSpeciesModel:
+    Type: AWS::ApiGateway::Model
+    Properties:
+      ContentType: application/json
+      Name: GetSpecies
+      RestApiId:
+        Ref: API
+      Schema:
+        "$schema": http://json-schema.org/draft-04/schema#
+        title: GetSpecies
+        type: object
+        additionalProperties: false
+        properties:
+          species:
+            type: string
+        required:
+        - species
+
+  AddFlowerModel:
+    Type: AWS::ApiGateway::Model
+    Properties:
+      ContentType: application/json
+      Name: AddFlower
+      RestApiId:
+        Ref: API
+      Schema:
+        "$schema": http://json-schema.org/draft-04/schema#
+        title: AddFlower
+        type: object
+        additionalProperties: false
+        properties:
+          sepal_length:
+            type: string
+          sepal_width:
+            type: string
+          petal_width:
+            type: string
+          petal_width:
+            type: string
+          species:
+            type: string
+        required:
+        - sepal_length
+        - sepal_width
+        - petal_length
+        - petal_width
+        - species
+
+  FlowerResource:
+    Type: AWS::ApiGateway::Resource
+    Properties:
+      RestApiId:
+        Ref: API
+      ParentId:
+        Fn::GetAtt:
+        - API
+        - RootResourceId
+      PathPart: flower
