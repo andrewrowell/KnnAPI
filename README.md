@@ -15,7 +15,7 @@ Currently set up to use the [Iris Data Set](https://en.wikipedia.org/wiki/Iris_f
 # Using
 ## Adding a flower to the database
 1. Find your API endpoint in the aws console.
-![Picture of console]("images/endpoint.png")
+![Picture of console](images/endpoint.png)
 2. Make a POST http request like `https://<ENDPOINT>/flower?petal_length=14&petal_width=18&sepal_length=15&sepal_width=18&species=0`
 
 ## Files
