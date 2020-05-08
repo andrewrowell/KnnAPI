@@ -24,6 +24,8 @@ Currently set up to use the [Iris Data Set](https://en.wikipedia.org/wiki/Iris_f
 * s3_setup.sh - creates s3 bucket for lambda zip.
 * testflower.py - Lambda to estimate species from a flower's data.
 * upload_lambda.sh - zips lambda scripts and uploads them to the s3 bucket.
+* iris_data.csv - CSV file of the [Iris Data Set](https://en.wikipedia.org/wiki/Iris_flower_data_set)
+* upload_data.py - Python script to upload training data.
 
 ## To Do
 * Finish lambdas
