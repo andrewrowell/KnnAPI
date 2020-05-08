@@ -26,8 +26,8 @@ Currently set up to use the [Iris Data Set](https://en.wikipedia.org/wiki/Iris_f
 * upload_lambda.sh - zips lambda scripts and uploads them to the s3 bucket.
 * iris_data.csv - CSV file of the [Iris Data Set](https://en.wikipedia.org/wiki/Iris_flower_data_set)
 * upload_data.py - Python script to upload training data.
+* test_data.py - Sends requests to test accuracy of model built from uploaded data.
 
 ## To Do
-* Finish lambdas
-  * Query-model lambda - builds KNN model from data in DB, returns result
-* Script to test it with the [Iris Data Set](https://en.wikipedia.org/wiki/Iris_flower_data_set)
+* Make setup easier.
+* Generalize beyond Iris data.

@@ -65,7 +65,7 @@ Resources:
                 - Ref: AWS::AccountId
                 - ":table/iris_data*"
 
-  AddFlowerFunction:
+  AddFlowerLambda:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
     Properties:
       CodeUri: lambda/
@@ -93,7 +93,7 @@ Resources:
       Action: lambda:invokeFunction
       FunctionName:
         Fn::GetAtt:
-        - AddFlowerFunction
+        - AddFlowerLambda
         - Arn
       Principal: apigateway.amazonaws.com
       SourceArn:
@@ -155,7 +155,7 @@ Resources:
             - Ref: AWS::Region
             - ":lambda:path/2015-03-31/functions/"
             - Fn::GetAtt:
-              - AddFlowerFunction
+              - AddFlowerLambda
               - Arn
             - "/invocations"
         IntegrationResponses:
