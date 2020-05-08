@@ -175,7 +175,7 @@ Resources:
           StatusCode: 201
         PassthroughBehavior: NEVER
         RequestTemplates:
-          application/json: '{"fun": "postUser", "body": $input.json(''$'')}'
+          application/json: '{"petal_length":"$input.params(''petal_length'')","petal_width":"$input.params(''petal_width'')","sepal_length":"$input.params(''sepal_length'')","sepal_width":"$input.params(''sepal_width'')","species":"$input.params(''species'')"}'
       RequestModels:
         application/json:
           Ref: AddFlowerModel

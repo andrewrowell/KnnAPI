@@ -1,3 +1,5 @@
+#!/bin/bash
+
 #TODO run this script on a clean setup to make sure it creates the bucket
 # The individual commands worked, but calling ./upload_lambda.sh seemed to
 # have trouble with the zip command.
