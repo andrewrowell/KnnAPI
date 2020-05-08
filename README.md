@@ -31,3 +31,4 @@ Currently set up to use the [Iris Data Set](https://en.wikipedia.org/wiki/Iris_f
 ## To Do
 * Make setup easier.
 * Generalize beyond Iris data.
+* Add more to Readme intro to explain what this all does.
