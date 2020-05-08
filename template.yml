@@ -1,3 +1,6 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+
 Resources:
 
   API:
@@ -62,39 +65,27 @@ Resources:
                 - Ref: AWS::AccountId
                 - ":table/iris_data*"
 
-  AddFlowerLambda:
-    Type: AWS::Lambda::Function
+  AddFlowerFunction:
+    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
     Properties:
-      Code:
-        S3Bucket: 'knnapi-andrew'
-        S3Key: 'lambda.zip'
-
-      Description: generic handler
+      CodeUri: lambda/
       Handler: addflower.handler
-      MemorySize: 128
+      Runtime: python3.7
       Role:
         Fn::GetAtt:
         - LambdaRole
         - Arn
-      Runtime: python3.7
-      Timeout: 3
 
   TestFlowerLambda:
-    Type: AWS::Lambda::Function
+    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
     Properties:
-      Code:
-        S3Bucket: 'knnapi-andrew'
-        S3Key: 'lambda.zip'
-
-      Description: generic handler
+      CodeUri: lambda/
       Handler: testflower.handler
-      MemorySize: 128
+      Runtime: python3.7
       Role:
         Fn::GetAtt:
         - LambdaRole
         - Arn
-      Runtime: python3.7
-      Timeout: 3
 
   AddFlowerLambdaPermission:
     Type: AWS::Lambda::Permission
@@ -102,7 +93,7 @@ Resources:
       Action: lambda:invokeFunction
       FunctionName:
         Fn::GetAtt:
-        - AddFlowerLambda
+        - AddFlowerFunction
         - Arn
       Principal: apigateway.amazonaws.com
       SourceArn:
@@ -164,7 +155,7 @@ Resources:
             - Ref: AWS::Region
             - ":lambda:path/2015-03-31/functions/"
             - Fn::GetAtt:
-              - AddFlowerLambda
+              - AddFlowerFunction
               - Arn
             - "/invocations"
         IntegrationResponses:
@@ -216,7 +207,7 @@ Resources:
           StatusCode: 200
         PassthroughBehavior: NEVER
         RequestTemplates:
-          application/json: '$input.body'
+          application/json:  '{"petal_length":"$input.params(''petal_length'')","petal_width":"$input.params(''petal_width'')","sepal_length":"$input.params(''sepal_length'')","sepal_width":"$input.params(''sepal_width'')"}'
       RequestModels:
         application/json:
           Ref: AddFlowerModel

@@ -10,7 +10,7 @@ Currently set up to use the [Iris Data Set](https://en.wikipedia.org/wiki/Iris_f
 2. Create the bucket with `aws s3api create-bucket --bucket <YOUR BUCKET NAME> --acl private`.
 3. Zip the lambda executables with `zip lambda.zip addflower.py testflower.py`.
 4. Upload the lambda with `aws s3 cp lambda.zip s3://<YOUR_BUCKET_NAME>/lambda.zip`.
-5. Deploy the CFT with `aws cloudformation deploy --template-file knnapi.yml --stack-name knnapi --capabilities CAPABILITY_NAMED_IAM`
+5. Deploy the CFT with `sam build && sam deploy --guided`
 
 # Using
 ## Adding a flower to the database
@@ -19,10 +19,10 @@ Currently set up to use the [Iris Data Set](https://en.wikipedia.org/wiki/Iris_f
 2. Make a POST http request like `https://<ENDPOINT>/flower?petal_length=14&petal_width=18&sepal_length=15&sepal_width=18&species=0`
 
 ## Files
-* addflower.py - Lambda to add data to DynamoDB.
-* knnapi.yml - CFT for api, lambdas, and database.
+* lambda/addflower.py - Lambda to add data to DynamoDB.
+* template.yml - CFT for api, lambdas, and database.
 * s3_setup.sh - creates s3 bucket for lambda zip.
-* testflower.py - Lambda to estimate species from a flower's data.
+* lambda/testflower.py - Lambda to estimate species from a flower's data.
 * upload_lambda.sh - zips lambda scripts and uploads them to the s3 bucket.
 * iris_data.csv - CSV file of the [Iris Data Set](https://en.wikipedia.org/wiki/Iris_flower_data_set)
 * upload_data.py - Python script to upload training data.

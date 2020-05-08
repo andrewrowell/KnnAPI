@@ -4,7 +4,7 @@ import requests
 random.seed(42)
 
 TRAIN_RATIO = 0.8
-API_ENDPOINT = "https://vvi2f6gvy7.execute-api.us-east-1.amazonaws.com/v1/flower"
+API_ENDPOINT = "https://anaw2o18zf.execute-api.us-east-1.amazonaws.com/v1/flower"
 
 iris_data = open('iris_data.csv')
 
