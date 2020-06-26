@@ -33,6 +33,7 @@ def handler(event, context):
     response = {}
     response['statusCode'] = 200
 
+    # Is this line necessary?
     data[0].pop('id')
 
     response['body'] = str(n.predict(x_test)[0])
