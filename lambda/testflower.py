@@ -9,6 +9,7 @@ def handler(event, context):
     response = flowertable.scan()
     data = response['Items']
 
+    # Handle pagination
     while response.get('LastEvaluated'):
         response = flowertable.scan(ExclusiveStartKey=response['LastEvaluatedKey'])
         data.extend(response['Items'])
