@@ -34,6 +34,8 @@ for i in range(int(length*TRAIN_RATIO)):
     'petal_width':datum[3],
     'species':datum[4]}
     requests.post(url=API_ENDPOINT, params = params)
+    
+# Write test data CSV
 test_data = open('test_data.csv', 'w')
 test_data.write("sepal_length,sepal_width,petal_length,petal_width,species")
 for i in range(int(length*TRAIN_RATIO), length):
