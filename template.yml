@@ -241,7 +241,7 @@ Resources:
     Type: AWS::ApiGateway::Model
     Properties:
       ContentType: application/json
-      Name: AddFlower
+      Name: GetFlower
       RestApiId:
         Ref: API
       Schema:
