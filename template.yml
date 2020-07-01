@@ -210,7 +210,7 @@ Resources:
           application/json:  '{"petal_length":"$input.params(''petal_length'')","petal_width":"$input.params(''petal_width'')","sepal_length":"$input.params(''sepal_length'')","sepal_width":"$input.params(''sepal_width'')"}'
       RequestModels:
         application/json:
-          Ref: AddFlowerModel
+          Ref: GetFlowerModel
       MethodResponses:
       - ResponseModels:
           application/json:
@@ -236,6 +236,33 @@ Resources:
             type: string
         required:
         - species
+
+  GetFlowerModel:
+    Type: AWS::ApiGateway::Model
+    Properties:
+      ContentType: application/json
+      Name: AddFlower
+      RestApiId:
+        Ref: API
+      Schema:
+        "$schema": http://json-schema.org/draft-04/schema#
+        title: AddFlower
+        type: object
+        additionalProperties: false
+        properties:
+          sepal_length:
+            type: string
+          sepal_width:
+            type: string
+          petal_width:
+            type: string
+          petal_width:
+            type: string
+        required:
+        - sepal_length
+        - sepal_width
+        - petal_length
+        - petal_width
 
   AddFlowerModel:
     Type: AWS::ApiGateway::Model
