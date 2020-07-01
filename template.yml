@@ -66,7 +66,7 @@ Resources:
                 - ":table/iris_data*"
 
   AddFlowerLambda:
-    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+    Type: AWS::Serverless::Function
     Properties:
       CodeUri: lambda/
       Handler: addflower.handler
@@ -77,7 +77,7 @@ Resources:
         - Arn
 
   TestFlowerLambda:
-    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+    Type: AWS::Serverless::Function
     Properties:
       CodeUri: lambda/
       Handler: testflower.handler
