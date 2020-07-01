@@ -1,7 +1,7 @@
 import random
 import requests
 
-API_ENDPOINT = "https://byb2xandqc.execute-api.us-east-1.amazonaws.com/v1/flower"
+API_ENDPOINT = "https://4j0y67iki7.execute-api.us-east-1.amazonaws.com/v1/flower"
 
 iris_data = open('test_data.csv')
 

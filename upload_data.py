@@ -4,7 +4,7 @@ import requests
 random.seed(42)
 
 TRAIN_RATIO = 0.8
-API_ENDPOINT = "https://byb2xandqc.execute-api.us-east-1.amazonaws.com/v1/flower"
+API_ENDPOINT = "https://4j0y67iki7.execute-api.us-east-1.amazonaws.com/v1/flower"
 
 iris_data = open('iris_data.csv')
 
@@ -34,7 +34,7 @@ for i in range(int(length*TRAIN_RATIO)):
     'petal_width':datum[3],
     'species':datum[4]}
     requests.post(url=API_ENDPOINT, params = params)
-    
+
 # Write test data CSV
 test_data = open('test_data.csv', 'w')
 test_data.write("sepal_length,sepal_width,petal_length,petal_width,species")
