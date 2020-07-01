@@ -7,8 +7,7 @@ Currently set up to use the [Iris Data Set](https://en.wikipedia.org/wiki/Iris_f
 
 # Deploying
 1. Install aws cli and aws sam cli, and configure your auth credentials.
-2. Upload the lambda with `aws s3 cp lambda.zip s3://<YOUR_BUCKET_NAME>/lambda.zip`.
-3. Deploy the CFT with `sam build && sam deploy --guided`
+2. Deploy the CFT with `sam build && sam deploy --guided`
 
 # Using
 ## Adding a flower to the database
